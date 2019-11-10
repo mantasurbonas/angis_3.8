@@ -209,9 +209,9 @@ class InteractiveConsole(InteractiveInterpreter):
             sys.ps2
         except AttributeError:
             sys.ps2 = "... "
-        cprt = 'Type "help", "copyright", "credits" or "license" for more information.'
+        cprt = 'Rasyk "help", "copyright", "credits" arba "license" ir suzinok daugiau.'
         if banner is None:
-            self.write("Python %s on %s\n%s\n(%s)\n" %
+            self.write("Angis / Python %s on %s\n%s\n(%s)\n" %
                        (sys.version, sys.platform, cprt,
                         self.__class__.__name__))
         elif banner:

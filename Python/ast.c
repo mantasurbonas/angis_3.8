@@ -396,6 +396,9 @@ validate_stmt(stmt_ty stmt)
             validate_expr(stmt->v.AsyncFor.iter, Load) &&
             validate_body(stmt->v.AsyncFor.body, "AsyncFor") &&
             validate_stmts(stmt->v.AsyncFor.orelse);
+    case Kartok_kind:
+        return validate_expr(stmt->v.Kartok.target, Store) &&
+            validate_body(stmt->v.Kartok.body, "Kartok");
     case While_kind:
         return validate_expr(stmt->v.While.test, Load) &&
             validate_body(stmt->v.While.body, "While") &&
@@ -580,6 +583,7 @@ static stmt_ty ast_for_classdef(struct compiling *, const node *, asdl_seq *);
 
 static stmt_ty ast_for_with_stmt(struct compiling *, const node *, bool);
 static stmt_ty ast_for_for_stmt(struct compiling *, const node *, bool);
+static stmt_ty ast_for_kartok_stmt(struct compiling *, const node *, bool);
 
 /* Note different signature for ast_for_call */
 static expr_ty ast_for_call(struct compiling *, const node *, expr_ty,
@@ -1258,7 +1262,11 @@ ast_for_comp_op(struct compiling *c, const node *n)
             case NAME:
                 if (strcmp(STR(n), "in") == 0)
                     return In;
+				if (strcmp(STR(n), "iš") == 0)
+                    return In;
                 if (strcmp(STR(n), "is") == 0)
+                    return Is;
+				if (strcmp(STR(n), "yra") == 0)
                     return Is;
                 /* fall through */
             default:
@@ -2913,13 +2921,15 @@ ast_for_expr(struct compiling *c, const node *n)
                 expr_ty e = ast_for_expr(c, CHILD(n, i));
                 if (!e)
                     return NULL;
-                asdl_seq_SET(seq, i / 2, e);
+                asdl_seq_SET(seq, i / 2, e); 
             }
-            if (!strcmp(STR(CHILD(n, 1)), "and"))
+            if ((!strcmp(STR(CHILD(n, 1)), "and")) || (!strcmp(STR(CHILD(n, 1)), "ir")))
                 return BoolOp(And, seq, LINENO(n), n->n_col_offset,
                               n->n_end_lineno, n->n_end_col_offset,
                               c->c_arena);
-            assert(!strcmp(STR(CHILD(n, 1)), "or"));
+            assert((!strcmp(STR(CHILD(n, 1)), "or")) 
+				|| (!strcmp(STR(CHILD(n, 1)), "arba"))
+				|| (!strcmp(STR(CHILD(n, 1)), "ar")));
             return BoolOp(Or, seq, LINENO(n), n->n_col_offset,
                           n->n_end_lineno, n->n_end_col_offset, c->c_arena);
         case not_test:
@@ -3978,7 +3988,7 @@ ast_for_if_stmt(struct compiling *c, const node *n)
     char *s;
     int end_lineno, end_col_offset;
 
-    REQ(n, if_stmt);
+    // REQ(n, if_stmt);
 
     if (NCH(n) == 4) {
         expr_ty expression;
@@ -4001,7 +4011,8 @@ ast_for_if_stmt(struct compiling *c, const node *n)
        's' for el_s_e, or
        'i' for el_i_f
     */
-    if (s[2] == 's') {
+    if ((s[1] == 'l' && s[2] == 's') ||
+        (s[1] == 'i' && s[2] == 't')) {
         expr_ty expression;
         asdl_seq *seq1, *seq2;
 
@@ -4019,7 +4030,9 @@ ast_for_if_stmt(struct compiling *c, const node *n)
         return If(expression, seq1, seq2, LINENO(n), n->n_col_offset,
                   end_lineno, end_col_offset, c->c_arena);
     }
-    else if (s[2] == 'i') {
+    else
+    if ((s[1] == 'l' && s[2] == 'i') ||
+        (s[1] == 'j' && s[2] == 'e')) {
         int i, n_elif, has_else = 0;
         expr_ty expression;
         asdl_seq *suite_seq;
@@ -4028,7 +4041,9 @@ ast_for_if_stmt(struct compiling *c, const node *n)
         /* must reference the child n_elif+1 since 'else' token is third,
            not fourth, child from the end. */
         if (TYPE(CHILD(n, (n_elif + 1))) == NAME
-            && STR(CHILD(n, (n_elif + 1)))[2] == 's') {
+            && ( (STR(CHILD(n, (n_elif + 1)))[2] == 's') ||// el_s_e
+			     (STR(CHILD(n, (n_elif + 1)))[2] == 't'))  // ki_t_uatveju
+			){
             has_else = 1;
             n_elif -= 3;
         }
@@ -4221,6 +4236,36 @@ ast_for_for_stmt(struct compiling *c, const node *n0, bool is_async)
                    end_lineno, end_col_offset, c->c_arena);
 }
 
+static stmt_ty
+ast_for_kartok_stmt(struct compiling *c, const node *n, bool is_async)
+{
+    asdl_seq *suite_seq, *seq = NULL; 
+    expr_ty expression;
+	int end_lineno, end_col_offset;
+
+    /* kartok_stmt: 'kartok' testlist ':' suite */
+    REQ(n, kartok_stmt);
+
+    expression = ast_for_testlist(c, CHILD(n, 1));
+    if (!expression)
+        return NULL;
+
+    suite_seq = ast_for_suite(c, CHILD(n, 3));
+    if (!suite_seq)
+        return NULL;
+
+	if (seq != NULL) {
+        get_last_end_pos(seq, &end_lineno, &end_col_offset);
+    } else {
+        get_last_end_pos(suite_seq, &end_lineno, &end_col_offset);
+    }
+	
+    return Kartok(expression, suite_seq,
+               LINENO(n), n->n_col_offset, end_lineno, end_col_offset, 
+               c->c_arena);
+}
+
+
 static excepthandler_ty
 ast_for_except_clause(struct compiling *c, const node *exc, node *body)
 {
@@ -4285,6 +4330,7 @@ ast_for_except_clause(struct compiling *c, const node *exc, node *body)
 static stmt_ty
 ast_for_try_stmt(struct compiling *c, const node *n)
 {
+	const char* nodename=NULL;
     const int nch = NCH(n);
     int end_lineno, end_col_offset, n_except = (nch - 3)/3;
     asdl_seq *body, *handlers = NULL, *orelse = NULL, *finally = NULL;
@@ -4297,7 +4343,9 @@ ast_for_try_stmt(struct compiling *c, const node *n)
         return NULL;
 
     if (TYPE(CHILD(n, nch - 3)) == NAME) {
-        if (strcmp(STR(CHILD(n, nch - 3)), "finally") == 0) {
+		nodename = STR(CHILD(n, nch - 3));
+        if ((strcmp(nodename, "finally") == 0) ||  
+            (strcmp(nodename, "galiausiai") == 0) ) {
             if (nch >= 9 && TYPE(CHILD(n, nch - 6)) == NAME) {
                 /* we can assume it's an "else",
                    because nch >= 9 for try-else-finally and
@@ -4564,6 +4612,8 @@ ast_for_stmt(struct compiling *c, const node *n)
                 return ast_for_while_stmt(c, ch);
             case for_stmt:
                 return ast_for_for_stmt(c, ch, 0);
+            case kartok_stmt:
+                return ast_for_kartok_stmt(c, ch, 0);
             case try_stmt:
                 return ast_for_try_stmt(c, ch);
             case with_stmt:

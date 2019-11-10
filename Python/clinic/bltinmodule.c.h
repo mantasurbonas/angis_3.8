@@ -562,7 +562,8 @@ PyDoc_STRVAR(builtin_len__doc__,
 "Return the number of items in a container.");
 
 #define BUILTIN_LEN_METHODDEF    \
-    {"len", (PyCFunction)builtin_len, METH_O, builtin_len__doc__},
+    {"len", (PyCFunction)builtin_len, METH_O, builtin_len__doc__},\
+	{"ilgis", (PyCFunction)builtin_len, METH_O, builtin_len__doc__},\
 
 PyDoc_STRVAR(builtin_locals__doc__,
 "locals($module, /)\n"
@@ -665,7 +666,10 @@ PyDoc_STRVAR(builtin_input__doc__,
 "On *nix systems, readline is used if available.");
 
 #define BUILTIN_INPUT_METHODDEF    \
-    {"input", (PyCFunction)(void(*)(void))builtin_input, METH_FASTCALL, builtin_input__doc__},
+    {"input", (PyCFunction)(void(*)(void))builtin_input, METH_FASTCALL, builtin_input__doc__},\
+	{"įvesk", (PyCFunction)(void(*)(void))builtin_input, METH_FASTCALL, builtin_input__doc__},\
+	{"ivesk", (PyCFunction)(void(*)(void))builtin_input, METH_FASTCALL, builtin_input__doc__},\
+	{"paklausk", (PyCFunction)(void(*)(void))builtin_input, METH_FASTCALL, builtin_input__doc__},\
 
 static PyObject *
 builtin_input_impl(PyObject *module, PyObject *prompt);
@@ -676,7 +680,10 @@ builtin_input(PyObject *module, PyObject *const *args, Py_ssize_t nargs)
     PyObject *return_value = NULL;
     PyObject *prompt = NULL;
 
-    if (!_PyArg_CheckPositional("input", nargs, 0, 1)) {
+    if (!_PyArg_CheckPositional("input", nargs, 0, 1) &&
+		!_PyArg_CheckPositional("įvesk", nargs, 0, 1) &&
+		!_PyArg_CheckPositional("ivesk", nargs, 0, 1) &&
+		!_PyArg_CheckPositional("paklausk", nargs, 0, 1)) {
         goto exit;
     }
     if (nargs < 1) {

@@ -1003,14 +1003,14 @@ class PyShell(OutputWindow):
 
     def close(self):
         "Extend EditorWindow.close()"
-        if self.executing:
-            response = tkMessageBox.askokcancel(
-                "Kill?",
-                "Your program is still running!\n Do you want to kill it?",
-                default="ok",
-                parent=self.text)
-            if response is False:
-                return "cancel"
+#        if self.executing:
+#            response = tkMessageBox.askokcancel(
+#                "Kill?",
+#                "Your program is still running!\n Do you want to kill it?",
+#                default="ok",
+#                parent=self.text)
+#            if response is False:
+#                return "cancel"
         self.stop_readline()
         self.canceled = True
         self.closing = True
@@ -1040,7 +1040,7 @@ class PyShell(OutputWindow):
         return self.shell_title
 
     COPYRIGHT = \
-          'Type "help", "copyright", "credits" or "license()" for more information.'
+          'Rašyk "help", "copyright", "credits" arba "license()" jei nori sužinoti daugiau.'
 
     def begin(self):
         self.text.mark_set("iomark", "insert")
@@ -1058,7 +1058,7 @@ class PyShell(OutputWindow):
                     "for details.\n\n")
             sys.displayhook = rpc.displayhook
 
-        self.write("Python %s on %s\n%s\n%s" %
+        self.write("Angis / Python %s on %s\n%s\n%s" %
                    (sys.version, sys.platform, self.COPYRIGHT, nosub))
         self.text.focus_force()
         self.showprompt()

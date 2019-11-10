@@ -24,8 +24,8 @@
 /* End of includes for exit_sigint() */
 
 #define COPYRIGHT \
-    "Type \"help\", \"copyright\", \"credits\" or \"license\" " \
-    "for more information."
+    "Rasyk \"help\", \"copyright\", \"credits\" arba \"license\" " \
+    "ir suzinok daugiau."
 
 #ifdef __cplusplus
 extern "C" {
@@ -204,7 +204,7 @@ pymain_header(const PyConfig *config)
         return;
     }
 
-    fprintf(stderr, "Python %s on %s\n", Py_GetVersion(), Py_GetPlatform());
+    fprintf(stderr, "Angis / Python %s on %s\n", Py_GetVersion(), Py_GetPlatform());
     if (config->site_import) {
         fprintf(stderr, "%s\n", COPYRIGHT);
     }

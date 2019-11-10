@@ -2738,6 +2738,9 @@ static PyMethodDef builtin_methods[] = {
     BUILTIN_ORD_METHODDEF
     BUILTIN_POW_METHODDEF
     {"print",           (PyCFunction)(void(*)(void))builtin_print,      METH_FASTCALL | METH_KEYWORDS, print_doc},
+	{"rašyk",           (PyCFunction)(void(*)(void))builtin_print,      METH_FASTCALL | METH_KEYWORDS, print_doc},
+	{"rasyk",           (PyCFunction)(void(*)(void))builtin_print,      METH_FASTCALL | METH_KEYWORDS, print_doc},
+	{"spausdink",           (PyCFunction)(void(*)(void))builtin_print,      METH_FASTCALL | METH_KEYWORDS, print_doc},
     BUILTIN_REPR_METHODDEF
     BUILTIN_ROUND_METHODDEF
     BUILTIN_SETATTR_METHODDEF
@@ -2803,7 +2806,9 @@ _PyBuiltin_Init(void)
     SETBUILTIN("Ellipsis",              Py_Ellipsis);
     SETBUILTIN("NotImplemented",        Py_NotImplemented);
     SETBUILTIN("False",                 Py_False);
+    SETBUILTIN("Netiesa",               Py_False);
     SETBUILTIN("True",                  Py_True);
+    SETBUILTIN("Tiesa",                 Py_True);
     SETBUILTIN("bool",                  &PyBool_Type);
     SETBUILTIN("memoryview",        &PyMemoryView_Type);
     SETBUILTIN("bytearray",             &PyByteArray_Type);
@@ -2814,18 +2819,23 @@ _PyBuiltin_Init(void)
     SETBUILTIN("enumerate",             &PyEnum_Type);
     SETBUILTIN("filter",                &PyFilter_Type);
     SETBUILTIN("float",                 &PyFloat_Type);
+    SETBUILTIN("realusSk",              &PyFloat_Type);
     SETBUILTIN("frozenset",             &PyFrozenSet_Type);
     SETBUILTIN("property",              &PyProperty_Type);
     SETBUILTIN("int",                   &PyLong_Type);
+    SETBUILTIN("sveikasSk",             &PyLong_Type);
     SETBUILTIN("list",                  &PyList_Type);
     SETBUILTIN("map",                   &PyMap_Type);
     SETBUILTIN("object",                &PyBaseObject_Type);
     SETBUILTIN("range",                 &PyRange_Type);
+    SETBUILTIN("intervalas",            &PyRange_Type);
+    SETBUILTIN("intervalo",             &PyRange_Type);
     SETBUILTIN("reversed",              &PyReversed_Type);
     SETBUILTIN("set",                   &PySet_Type);
     SETBUILTIN("slice",                 &PySlice_Type);
     SETBUILTIN("staticmethod",          &PyStaticMethod_Type);
     SETBUILTIN("str",                   &PyUnicode_Type);
+	SETBUILTIN("tekstas",               &PyUnicode_Type);
     SETBUILTIN("super",                 &PySuper_Type);
     SETBUILTIN("tuple",                 &PyTuple_Type);
     SETBUILTIN("type",                  &PyType_Type);
