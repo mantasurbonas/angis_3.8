@@ -93,8 +93,8 @@ del_stmt: ('del'|'trink') exprlist
 pass_stmt: ('pass'|'tiekto')
 flow_stmt: break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt
 break_stmt: ('break'|'nutrauk')
-continue_stmt: ('continue'|'tæsk')
-return_stmt: ('return'|'gràþink'|'gráþk') [testlist_star_expr]
+continue_stmt: ('continue'|'tÄ™sk')
+return_stmt: ('return'|'grÄ…Å¾ink'|'grÄ¯Å¾k') [testlist_star_expr]
 yield_stmt: yield_expr
 raise_stmt: 'raise' [test ['from' test]]
 import_stmt: import_name | import_from
@@ -115,7 +115,7 @@ compound_stmt: if_stmt | while_stmt | for_stmt | kartok_stmt | try_stmt | with_s
 async_stmt: ASYNC (funcdef | with_stmt | for_stmt)
 if_stmt: ('if' | 'jei' | 'jeigu') namedexpr_test ':' suite (('elif' | 'ojei' | 'ojeigu') namedexpr_test ':' suite)* [('else' | 'kituatveju') ':' suite]
 while_stmt: ('while'|'kol') namedexpr_test ':' suite [('else'|'kituatveju') ':' suite]
-for_stmt: ('for' | 'imk') exprlist ('in' | 'ið') testlist ':' [TYPE_COMMENT] suite [('else'|'kituatveju') ':' suite]
+for_stmt: ('for' | 'imk') exprlist ('in' | 'iÅ¡') testlist ':' [TYPE_COMMENT] suite [('else'|'kituatveju') ':' suite]
 kartok_stmt: 'kartok' testlist ':' suite
 try_stmt: (('try'|'bandyk') ':' suite
            ((except_clause ':' suite)+
@@ -125,7 +125,7 @@ try_stmt: (('try'|'bandyk') ':' suite
 with_stmt: ('with'|'su') with_item (',' with_item)*  ':' [TYPE_COMMENT] suite
 with_item: test [('as'|'kaip') expr]
 # NB compile.c makes sure that the default except clause is last
-except_clause: ('except'|'pagavæs') [test [('as'|'pavadink') NAME]]
+except_clause: ('except'|'pagavÄ™s') [test [('as'|'pavadink') NAME]]
 suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT
 
 namedexpr_test: test [':=' test]
@@ -135,7 +135,7 @@ lambdef: 'lambda' [varargslist] ':' test
 lambdef_nocond: 'lambda' [varargslist] ':' test_nocond
 or_test: and_test (('or'|'arba') and_test)*
 and_test: not_test (('and'|'ir') not_test)*
-not_test: ('not'|'nëra') not_test | comparison
+not_test: ('not'|'nÄ—ra') not_test | comparison
 comparison: expr (comp_op expr)*
 # <> isn't actually a valid comparison operator in Python. It's here for the
 # sake of a __future__ import described in PEP 401 (which really works :-)
@@ -166,7 +166,7 @@ dictorsetmaker: ( ((test ':' test | '**' expr)
                   ((test | star_expr)
                    (comp_for | (',' (test | star_expr))* [','])) )
 
-classdef: ('class'|'klasë') NAME ['(' [arglist] ')'] ':' suite
+classdef: ('class'|'klasÄ—') NAME ['(' [arglist] ')'] ':' suite
 
 arglist: argument (',' argument)*  [',']
 
@@ -186,7 +186,7 @@ argument: ( test [comp_for] |
             '*' test )
 
 comp_iter: comp_for | comp_if
-sync_comp_for: ('for'|'imk') exprlist ('in'|'ið') or_test [comp_iter]
+sync_comp_for: ('for'|'imk') exprlist ('in'|'iÅ¡') or_test [comp_iter]
 comp_for: [ASYNC] sync_comp_for
 comp_if: ('if'|'jei'|'jeigu') test_nocond [comp_iter]
 
@@ -194,7 +194,7 @@ comp_if: ('if'|'jei'|'jeigu') test_nocond [comp_iter]
 encoding_decl: NAME
 
 yield_expr: ('yield'|'duok') [yield_arg]
-yield_arg: ('from'|'ið') test | testlist_star_expr
+yield_arg: ('from'|'iÅ¡') test | testlist_star_expr
 
 # the TYPE_COMMENT in suites is only parsed for funcdefs,
 # but can't go elsewhere due to ambiguity
